@@ -13,7 +13,7 @@ fi
 aws sqs create-queue --queue-name ${SQS_QUEUE_NAME}
 echo "Created SQS QUEUE name: ${SQS_QUEUE_NAME}"
 aws sqs list-queues --queue-name-prefix ${SQS_QUEUE_NAME}
-# SQS VisibilityTimeout (VisibilityTimeoutは、受信操作を行うとそのメッセージが見えなくなる一定の時間のことです。 Timeout前にそのメッセージに対して削除操作がされないと、再度キューに戻されます。)
+# SQS VisibilityTimeout
 SQS_VTOUT=60
 
 echo "Modified SQS queue-attributes VisibilityTimeout: ${SQS_VTOUT}"
