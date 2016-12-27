@@ -24,6 +24,30 @@ SQS_QUEUE_URL=$( \
 )
 aws sqs set-queue-attributes --queue-url ${SQS_QUEUE_URL} --attributes VisibilityTimeout=${SQS_VTOUT}
 
+# policyの設定ArnLikeの部分を任意のbucketに設定する
+SQS_POLICY='{
+  "Version":"2012-10-17",
+  "Statement":[
+    {
+      "Effect":"Allow",
+      "Principal": { "AWS": "*" },
+      "Action":"sqs:SendMessage",
+      "Resource":"SQS-queue-ARN",
+      "Condition":{
+        "ArnLike":{
+          "aws:SourceArn": "arn:aws:s3:*:*:fuga"
+        }
+      }
+    }
+  ]
+}'
+SQS_POLICY_ESCAPED=$(echo $SQS_POLICY | perl -pe 's/"/\\"/g')
+SQS_ATTRIBUTES='{"Policy":"'$SQS_POLICY_ESCAPED'"}'
+# policyを設定する
+aws sqs set-queue-attributes \
+  --queue-url ${SQS_QUEUE_URL} \
+  --attributes "$SQS_ATTRIBUTES"
+
 echo "Setting SQS QUEUE: ${SQS_QUEUE_NAME}"
 aws sqs get-queue-attributes \
         --queue-url ${SQS_QUEUE_URL} \
