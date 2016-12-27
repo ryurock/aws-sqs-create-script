@@ -13,7 +13,7 @@ fi
 aws sqs create-queue --queue-name ${SQS_QUEUE_NAME}
 echo "Created SQS QUEUE name: ${SQS_QUEUE_NAME}"
 aws sqs list-queues --queue-name-prefix ${SQS_QUEUE_NAME}
-# SQS VisibilityTimeout (VisibilityTimeoutは、受信操作を行うとそのメッセージが見えなくなる一定の時間のことです。 Timeout前にそのメッセージに対して削除操作がされないと、再度キューに戻されます。)
+# SQS VisibilityTimeout
 SQS_VTOUT=60
 
 echo "Modified SQS queue-attributes VisibilityTimeout: ${SQS_VTOUT}"
@@ -42,11 +42,11 @@ SQS_POLICY='{
   ]
 }'
 SQS_POLICY_ESCAPED=$(echo $SQS_POLICY | perl -pe 's/"/\\"/g')
-SQS_ATTRIBUTES='{"Policy":"'$SQS_POLICY_ESCAPED'"}'
+SQS_POLICY_ATTRIBUTES='{"Policy":"'$SQS_POLICY_ESCAPED'"}'
 # policyを設定する
 aws sqs set-queue-attributes \
   --queue-url ${SQS_QUEUE_URL} \
-  --attributes "$SQS_ATTRIBUTES"
+  --attributes "$SQS_POLICY_ATTRIBUTES"
 
 echo "Setting SQS QUEUE: ${SQS_QUEUE_NAME}"
 aws sqs get-queue-attributes \
